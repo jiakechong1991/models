@@ -25,13 +25,16 @@
 set -e
 
 # Where the pre-trained InceptionV3 checkpoint is saved to.
-PRETRAINED_CHECKPOINT_DIR=/tmp/checkpoints
+# 存储 预训练 模型
+PRETRAINED_CHECKPOINT_DIR=/Users/wangxiaoke/project/tensorflow/models/research/slim/train_data/checkpoints/flowers
 
+# 存储最终训练的模型
 # Where the training (fine-tuned) checkpoint and logs will be saved to.
-TRAIN_DIR=/tmp/flowers-models/inception_v3
+TRAIN_DIR=/Users/wangxiaoke/project/tensorflow/models/research/slim/train_data/flowers-models/inception_v3
 
+# 训练数据集位置
 # Where the dataset is saved to.
-DATASET_DIR=/tmp/flowers
+DATASET_DIR=/Users/wangxiaoke/project/tensorflow/models/research/slim/images_data/flowers
 
 # Download the pre-trained checkpoint.
 if [ ! -d "$PRETRAINED_CHECKPOINT_DIR" ]; then
@@ -59,7 +62,7 @@ python train_image_classifier.py \
   --checkpoint_path=${PRETRAINED_CHECKPOINT_DIR}/inception_v3.ckpt \
   --checkpoint_exclude_scopes=InceptionV3/Logits,InceptionV3/AuxLogits \
   --trainable_scopes=InceptionV3/Logits,InceptionV3/AuxLogits \
-  --max_number_of_steps=1000 \
+  --max_number_of_steps=100 \
   --batch_size=32 \
   --learning_rate=0.01 \
   --learning_rate_decay_type=fixed \
@@ -67,7 +70,8 @@ python train_image_classifier.py \
   --save_summaries_secs=60 \
   --log_every_n_steps=100 \
   --optimizer=rmsprop \
-  --weight_decay=0.00004
+  --weight_decay=0.00004 \
+  --clone_on_cpu=True
 
 # Run evaluation.
 python eval_image_classifier.py \
@@ -86,7 +90,7 @@ python train_image_classifier.py \
   --dataset_dir=${DATASET_DIR} \
   --model_name=inception_v3 \
   --checkpoint_path=${TRAIN_DIR} \
-  --max_number_of_steps=500 \
+  --max_number_of_steps=100 \
   --batch_size=32 \
   --learning_rate=0.0001 \
   --learning_rate_decay_type=fixed \
@@ -94,7 +98,9 @@ python train_image_classifier.py \
   --save_summaries_secs=60 \
   --log_every_n_steps=10 \
   --optimizer=rmsprop \
-  --weight_decay=0.00004
+  --weight_decay=0.00004 \
+  --clone_on_cpu=True
+
 
 # Run evaluation.
 python eval_image_classifier.py \
